@@ -105,18 +105,15 @@ const listeners = new Set(); // functies die een gespeelde noot ontvangen
 function buildPiano() {
   pianoEl.innerHTML = '';
   keyEls.clear();
-  const W = 40;
-  let x = 0;
+  let whites = 0;
   for (let m = LOW; m <= HIGH; m++) {
     const el = document.createElement('div');
     el.className = 'key ' + (isBlack(m) ? 'black' : 'white');
     el.dataset.midi = m;
-    if (isBlack(m)) {
-      el.style.left = (x - 13) + 'px';
-    } else {
-      el.style.left = x + 'px';
-      x += W;
-    }
+    // Posities in eenheden van de toetsbreedte (CSS-variabele), zodat het klavier meeschaalt.
+    el.style.left = isBlack(m)
+      ? `calc(var(--kw) * ${whites} - var(--kw) * .32)`
+      : `calc(var(--kw) * ${whites++})`;
     const lbl = document.createElement('span');
     lbl.className = 'lbl';
     el.appendChild(lbl);
@@ -129,7 +126,7 @@ function buildPiano() {
     pianoEl.appendChild(el);
     keyEls.set(m, el);
   }
-  pianoEl.style.width = x + 'px';
+  pianoEl.style.width = `calc(var(--kw) * ${whites})`;
   updateLabels();
 }
 
@@ -169,7 +166,7 @@ function scrollToKey(m) {
   const el = keyEls.get(m);
   const sc = pianoEl.parentElement;
   if (!el) return;
-  const left = el.offsetLeft - sc.clientWidth / 2 + 20;
+  const left = el.offsetLeft - sc.clientWidth / 2 + el.offsetWidth / 2;
   sc.scrollTo({ left, behavior: 'smooth' });
 }
 
@@ -242,18 +239,21 @@ if (navigator.requestMIDIAccess) {
 }
 
 /* ================= Tabs ================= */
-let currentTab = 'free';
+let currentTab = 'lessons';
 const tabStops = {}; // tab -> functie om lopende oefening te stoppen
 document.getElementById('tabs').addEventListener('click', e => {
   const b = e.target.closest('button[data-tab]');
-  if (!b) return;
+  if (!b || b.dataset.tab === currentTab) return;
   tabStops[currentTab]?.();
   currentTab = b.dataset.tab;
   document.querySelectorAll('#tabs button').forEach(x => x.classList.toggle('active', x === b));
   document.querySelectorAll('.tab').forEach(s => s.classList.toggle('active', s.id === 'tab-' + currentTab));
   clearMarks('mark', 'target');
   if (currentTab === 'scales') scales.showMarks();
+  tabStarts[currentTab]?.();
+  document.getElementById('main').scrollTop = 0;
 });
+const tabStarts = {}; // tab -> functie bij openen
 
 /* ================= Opties ================= */
 const labelSel = document.getElementById('label-mode');
@@ -730,6 +730,17 @@ document.getElementById('scale-stop').addEventListener('click', () => scaleSeq.s
 listeners.add(m => { if (currentTab === 'scales') scaleSeq.onNote(m); });
 tabStops.scales = () => scaleSeq.stop();
 
+/* ================= Volledig scherm + liggend vergrendelen ================= */
+document.getElementById('fullscreen').addEventListener('click', async () => {
+  try {
+    if (document.fullscreenElement) { await document.exitFullscreen(); return; }
+    await document.documentElement.requestFullscreen();
+    await screen.orientation?.lock?.('landscape');
+  } catch { /* niet ondersteund (bijv. iPhone) */ }
+});
+if (!document.documentElement.requestFullscreen) document.getElementById('fullscreen').hidden = true;
+
 /* ================= Start ================= */
 buildPiano();
 scrollToKey(66);
+window.addEventListener('orientationchange', () => setTimeout(() => scrollToKey(66), 300));
