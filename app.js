@@ -1,7 +1,7 @@
 'use strict';
 
 /* ================= Basis: noten ================= */
-const LOW = 48;   // C3
+const LOW = 36;   // C2
 const HIGH = 84;  // C6
 const NAMES = ['C', 'C♯', 'D', 'D♯', 'E', 'F', 'F♯', 'G', 'G♯', 'A', 'A♯', 'B'];
 const SOLFEGE = ['Do', 'Do♯', 'Re', 'Re♯', 'Mi', 'Fa', 'Fa♯', 'Sol', 'Sol♯', 'La', 'La♯', 'Si'];
@@ -161,6 +161,10 @@ function clearMarks(...classes) {
 function setClass(m, cls, on = true) {
   const el = keyEls.get(m);
   if (el) el.classList.toggle(cls, on);
+}
+// Klavier tonen/verbergen (in de lessen alleen als de vraag erom vraagt)
+function showPiano(on) {
+  document.body.classList.toggle('no-piano', !on);
 }
 function scrollToKey(m) {
   const el = keyEls.get(m);
@@ -325,7 +329,9 @@ function svg(tag, attrs, parent) {
   if (parent) parent.appendChild(el);
   return el;
 }
-function drawStaff(svgEl, clef, midi, color) {
+// notes: één MIDI-nummer, een lijst (naast elkaar) of null. color: kleur of lijst kleuren per noot.
+// opts.chord = noten boven elkaar (akkoord).
+function drawStaff(svgEl, clef, notes, color, opts = {}) {
   svgEl.innerHTML = '';
   const gap = 12;            // afstand tussen lijnen
   const bottom = 110;        // y van de onderste lijn
@@ -338,22 +344,43 @@ function drawStaff(svgEl, clef, midi, color) {
     'font-family': '"Noto Music","Bravura","Segoe UI Symbol","Apple Symbols",serif',
   }, svgEl);
   t.textContent = clef === 'treble' ? '𝄞' : '𝄢';
-  if (midi == null) return;
+  if (notes == null) return;
+  const list = Array.isArray(notes) ? notes : [notes];
   const bottomStep = clef === 'treble' ? diatonic(parseNote('E4')) : diatonic(parseNote('G2'));
-  const step = diatonic(midi) - bottomStep; // 0 = onderste lijn, 8 = bovenste lijn
-  const y = bottom - step * gap / 2;
-  const nx = 170;
-  // Hulplijnen
-  for (let s = -2; s >= step; s -= 2) svg('line', { x1: nx - 15, x2: nx + 15, y1: bottom - s * gap / 2, y2: bottom - s * gap / 2, stroke: 'currentColor', 'stroke-width': 1.2 }, svgEl);
-  for (let s = 10; s <= step; s += 2) svg('line', { x1: nx - 15, x2: nx + 15, y1: bottom - s * gap / 2, y2: bottom - s * gap / 2, stroke: 'currentColor', 'stroke-width': 1.2 }, svgEl);
-  // Nootkop + stok
-  const fill = color || 'currentColor';
-  svg('ellipse', { cx: nx, cy: y, rx: 7.5, ry: 5.6, transform: `rotate(-20 ${nx} ${y})`, fill }, svgEl);
-  const up = step < 4;
-  svg('line', {
-    x1: up ? nx + 6.8 : nx - 6.8, x2: up ? nx + 6.8 : nx - 6.8,
-    y1: y, y2: up ? y - 36 : y + 36, stroke: fill, 'stroke-width': 1.5,
-  }, svgEl);
+  const n = list.length;
+  const xs = opts.chord ? list.map(() => 170)
+    : list.map((_, i) => n === 1 ? 170 : 95 + i * (170 / Math.max(n - 1, 1)));
+  const steps = list.map(m => diatonic(isBlack(m) ? m - 1 : m) - bottomStep);
+  const ledger = (nx, st) => {
+    const ln = y => svg('line', { x1: nx - 13, x2: nx + 13, y1: y, y2: y, stroke: 'currentColor', 'stroke-width': 1.2 }, svgEl);
+    for (let s = -2; s >= st; s -= 2) ln(bottom - s * gap / 2);
+    for (let s = 10; s <= st; s += 2) ln(bottom - s * gap / 2);
+  };
+  list.forEach((m, i) => {
+    const nx = xs[i], step = steps[i];
+    const y = bottom - step * gap / 2;
+    const fill = (Array.isArray(color) ? color[i] : color) || 'currentColor';
+    ledger(nx, step);
+    if (isBlack(m)) {
+      const acc = svg('text', { x: nx - 24, y: y + 6, 'font-size': 20, fill, 'font-weight': 700 }, svgEl);
+      acc.textContent = '♯';
+    }
+    svg('ellipse', { cx: nx, cy: y, rx: 7.5, ry: 5.6, transform: `rotate(-20 ${nx} ${y})`, fill }, svgEl);
+    if (!opts.chord) {
+      const up = step < 4;
+      svg('line', {
+        x1: up ? nx + 6.8 : nx - 6.8, x2: up ? nx + 6.8 : nx - 6.8,
+        y1: y, y2: up ? y - 36 : y + 36, stroke: fill, 'stroke-width': 1.5,
+      }, svgEl);
+    }
+  });
+  if (opts.chord) {
+    const top = Math.min(...steps.map(st => bottom - st * gap / 2));
+    const bot = Math.max(...steps.map(st => bottom - st * gap / 2));
+    const up = (Math.min(...steps) + Math.max(...steps)) / 2 < 4;
+    const sx = up ? 176.8 : 163.2;
+    svg('line', { x1: sx, x2: sx, y1: up ? bot : top, y2: up ? top - 36 : bot + 36, stroke: 'currentColor', 'stroke-width': 1.5 }, svgEl);
+  }
 }
 
 /* ================= Noten lezen ================= */
@@ -364,7 +391,7 @@ const reading = {
   fb: document.getElementById('read-feedback'),
   score: document.getElementById('read-score'),
   pool(clef) {
-    const [lo, hi] = clef === 'treble' ? ['C4', 'A5'] : ['C3', 'E4'];
+    const [lo, hi] = clef === 'treble' ? ['C4', 'A5'] : ['G2', 'C4'];
     const out = [];
     for (let m = parseNote(lo); m <= parseNote(hi); m++) if (!isBlack(m)) out.push(m);
     return out;

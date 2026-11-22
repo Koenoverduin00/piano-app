@@ -6,8 +6,10 @@ De app werkt alleen in **liggende stand**; op een staande telefoon of tablet vra
 
 ## Functies
 
-- **Lessen** – een leerpad in Duolingo-stijl met 4 eenheden en 14 lessen (klavier ontdekken, eerste melodietjes, noten lezen, zwarte toetsen & akkoorden). Elke les bestaat uit korte stappen: uitleg, toetsen spelen, meerkeuzevragen, noten lezen, akkoorden en spelen op gehoor. Je verdient sterren (minder fouten = meer sterren) en XP, houdt een reeks dagen bij, en elke les ontgrendelt de volgende. Voortgang wordt in de browser opgeslagen.
-- **Vrij spelen** – speel op het klavier (C3–C6) met muis, touch, je computertoetsenbord of een MIDI-keyboard. Inclusief metronoom (40–200 BPM, 2/4, 3/4, 4/4).
+- **Lessen** – een leerpad in Duolingo-stijl met 9 eenheden en 46 lessen (± 375 stappen): het klavier ontdekken, hoog/laag en vingerzetting, ritme, eerste melodietjes, noten lezen in viool- en bassleutel, zwarte toetsen, toonladders & akkoorden en gehoortraining.
+  Vraagtypes: uitleg, meerkeuze (ook op gehoor of van de notenbalk), paren koppelen, op volgorde zetten, ritme meetikken, noten benoemen op de notenbalk, toetsen benoemen, noten/akkoorden spelen, van blad spelen en op gehoor naspelen.
+  Het klavier verschijnt alleen bij vragen waarvoor je het nodig hebt. Je verdient sterren, XP en een dagenreeks; elke les ontgrendelt de volgende. Voortgang wordt in de browser opgeslagen.
+- **Vrij spelen** – speel op het klavier (C2–C6) met muis, touch, je computertoetsenbord of een MIDI-keyboard. Inclusief metronoom (40–200 BPM, 2/4, 3/4, 4/4).
 - **Noten lezen** – er verschijnt een noot op de notenbalk (viool-, bassleutel of beide); speel hem op de piano. Score, reeks en record worden bijgehouden.
 - **Gehoortraining** – speel een gehoorde noot na, of herken intervallen (kleine secunde t/m octaaf).
 - **Liedjes** – laat een liedje voorspelen of oefen het in wachtmodus: de volgende toets licht op en het liedje wacht tot je hem speelt. Persoonlijke records worden opgeslagen.
