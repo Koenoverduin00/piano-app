@@ -757,6 +757,12 @@ document.getElementById('scale-stop').addEventListener('click', () => scaleSeq.s
 listeners.add(m => { if (currentTab === 'scales') scaleSeq.onNote(m); });
 tabStops.scales = () => scaleSeq.stop();
 
+/* ================= Klavier verschuiven (per octaaf) ================= */
+const pianoScroll = pianoEl.parentElement;
+const octaveWidth = () => keyEls.get(LOW).offsetWidth * 7;
+document.getElementById('piano-left').addEventListener('click', () => pianoScroll.scrollBy({ left: -octaveWidth(), behavior: 'smooth' }));
+document.getElementById('piano-right').addEventListener('click', () => pianoScroll.scrollBy({ left: octaveWidth(), behavior: 'smooth' }));
+
 /* ================= Volledig scherm + liggend vergrendelen ================= */
 document.getElementById('fullscreen').addEventListener('click', async () => {
   try {

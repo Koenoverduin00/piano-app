@@ -18,8 +18,8 @@
   --white-key: #fffdf8;
   --black-key: #1c1b1a;
   --shadow: 0 1px 2px rgba(0,0,0,.05), 0 4px 14px rgba(0,0,0,.06);
-  --kw: 40px;   /* breedte witte toets */
-  --kh: 170px;  /* hoogte witte toets */
+  --kw: 56px;   /* breedte witte toets */
+  --kh: 220px;  /* hoogte witte toets */
   --side: 220px;
 }
 @media (prefers-color-scheme: dark) {
@@ -272,12 +272,19 @@ svg.staff, #staff, #ls-staff { width: 100%; height: auto; display: block; color:
   padding: 8px 0 max(8px, env(safe-area-inset-bottom));
   box-shadow: 0 -4px 16px rgba(0,0,0,.06);
 }
-.piano-scroll { overflow-x: auto; padding: 0 12px; -webkit-overflow-scrolling: touch; }
+.piano-row { display: flex; align-items: stretch; gap: 4px; padding: 0 4px; }
+.piano-scroll { flex: 1; min-width: 0; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.piano-scroll::-webkit-scrollbar { display: none; }
+.piano-nav {
+  flex: none; width: 34px; padding: 0; border-radius: 10px; font-size: 1rem;
+  background: var(--surface-2); color: var(--muted); border: 2px solid var(--border);
+}
+.piano-nav:active { background: var(--accent-soft); color: var(--accent); }
 .piano { position: relative; height: var(--kh); margin: 0 auto; user-select: none; -webkit-user-select: none; touch-action: none; }
 .key {
   position: absolute; top: 0; border-radius: 0 0 7px 7px;
   display: flex; align-items: flex-end; justify-content: center;
-  font-size: 11px; padding-bottom: 6px; cursor: pointer; font-weight: 700;
+  font-size: 13px; padding-bottom: 8px; cursor: pointer; font-weight: 700;
 }
 .key.white {
   width: var(--kw); height: var(--kh); background: var(--white-key);
@@ -297,7 +304,7 @@ svg.staff, #staff, #ls-staff { width: 100%; height: auto; display: block; color:
 .key.active.black { background: #555; }
 .key.good { background: var(--good) !important; color: #fff; }
 .key.bad { background: var(--bad) !important; color: #fff; }
-.key .kb { position: absolute; font-size: 9px; opacity: .5; font-weight: 600; }
+.key .kb { position: absolute; font-size: 11px; opacity: .5; font-weight: 600; }
 .key.white .kb { bottom: 24px; }
 .key.black .kb { bottom: 8px; }
 
@@ -315,7 +322,7 @@ svg.staff, #staff, #ls-staff { width: 100%; height: auto; display: block; color:
   }
 }
 @media (max-height: 560px) {
-  :root { --kh: 118px; --kw: 34px; }
+  :root { --kh: 160px; --kw: 50px; }
   main { padding: 10px 16px; }
   h2 { font-size: 1.15rem; margin-bottom: 4px; }
   .hint { margin: 2px 0 8px; font-size: .9rem; }
@@ -326,8 +333,9 @@ svg.staff, #staff, #ls-staff { width: 100%; height: auto; display: block; color:
   .lesson-footer { padding-top: 8px; }
   .big-btn { padding: 8px 22px; }
   .node button { width: 58px; height: 52px; font-size: 22px; }
-  .key { font-size: 9px; padding-bottom: 4px; }
-  .key.white .kb { bottom: 18px; }
+  .key { font-size: 12px; padding-bottom: 5px; }
+  .key.white .kb { bottom: 22px; }
+  .piano-dock { padding-top: 4px; }
   #lesson-view { gap: 8px; }
   .lesson-body { gap: 12px; }
 }
@@ -341,7 +349,7 @@ svg.staff, #staff, #ls-staff { width: 100%; height: auto; display: block; color:
   .done-actions { grid-column: 1 / -1; }
 }
 @media (max-height: 420px) {
-  :root { --kh: 100px; --kw: 32px; }
+  :root { --kh: 150px; --kw: 48px; }
   .stats { padding-bottom: 6px; }
   .split { grid-template-columns: 220px 1fr; }
 }
