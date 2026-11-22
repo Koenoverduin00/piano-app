@@ -45,6 +45,9 @@
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; }
+/* Geen zoom bij dubbel tikken (snel achter elkaar op toetsen/knoppen tikken) */
+html, body, button, select, input, label, .key { touch-action: manipulation; }
+body { -webkit-tap-highlight-color: transparent; -webkit-text-size-adjust: 100%; }
 body {
   font-family: "Nunito", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   background: var(--bg); color: var(--text);

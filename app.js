@@ -740,6 +740,16 @@ document.getElementById('fullscreen').addEventListener('click', async () => {
 });
 if (!document.documentElement.requestFullscreen) document.getElementById('fullscreen').hidden = true;
 
+/* ================= Zoomen voorkomen (iOS negeert user-scalable=no) ================= */
+['gesturestart', 'gesturechange', 'gestureend'].forEach(t => document.addEventListener(t, e => e.preventDefault()));
+let lastTouchEnd = 0;
+document.addEventListener('touchend', e => {
+  const now = Date.now();
+  if (now - lastTouchEnd < 350 && !e.target.closest('select, input')) e.preventDefault();
+  lastTouchEnd = now;
+}, { passive: false });
+document.addEventListener('dblclick', e => e.preventDefault());
+
 /* ================= Start ================= */
 buildPiano();
 scrollToKey(66);
