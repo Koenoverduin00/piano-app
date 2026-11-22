@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Piano Oefenen</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>🎹 Piano Oefenen</h1>
+    <nav id="tabs">
+      <button data-tab="free" class="active">Vrij spelen</button>
+      <button data-tab="read">Noten lezen</button>
+      <button data-tab="ear">Gehoortraining</button>
+      <button data-tab="songs">Liedjes</button>
+      <button data-tab="scales">Toonladders</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Vrij spelen -->
+    <section id="tab-free" class="tab active">
+      <h2>Vrij spelen</h2>
+      <p class="hint">Speel met de muis, je vingers, je toetsenbord (<kbd>A</kbd> t/m <kbd>'</kbd> en <kbd>W</kbd> <kbd>E</kbd> <kbd>T</kbd> <kbd>Y</kbd> <kbd>U</kbd> <kbd>O</kbd> <kbd>P</kbd>) of een aangesloten MIDI-keyboard.</p>
+      <div class="panel">
+        <div class="lastnote">Laatste noot: <strong id="free-last">–</strong></div>
+        <div class="metronome">
+          <strong>Metronoom</strong>
+          <input type="range" id="metro-bpm" min="40" max="200" value="80">
+          <span><span id="metro-bpm-val">80</span> BPM</span>
+          <select id="metro-beats">
+            <option value="2">2/4</option>
+            <option value="3">3/4</option>
+            <option value="4" selected>4/4</option>
+          </select>
+          <button id="metro-toggle">Start</button>
+          <span id="metro-dots"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Noten lezen -->
+    <section id="tab-read" class="tab">
+      <h2>Noten lezen</h2>
+      <p class="hint">Welke noot staat er op de notenbalk? Speel hem op de piano.</p>
+      <div class="panel controls">
+        <label>Sleutel
+          <select id="read-clef">
+            <option value="treble">Vioolsleutel</option>
+            <option value="bass">Bassleutel</option>
+            <option value="both">Beide</option>
+          </select>
+        </label>
+        <label><input type="checkbox" id="read-octave"> Octaaf moet kloppen</label>
+        <button id="read-start">Start</button>
+      </div>
+      <div class="staff-wrap"><svg id="staff" viewBox="0 0 300 160" role="img" aria-label="Notenbalk"></svg></div>
+      <div class="feedback" id="read-feedback"></div>
+      <div class="scoreline" id="read-score"></div>
+    </section>
+
+    <!-- Gehoortraining -->
+    <section id="tab-ear" class="tab">
+      <h2>Gehoortraining</h2>
+      <div class="panel controls">
+        <label>Oefening
+          <select id="ear-mode">
+            <option value="note">Noot naspelen</option>
+            <option value="interval">Interval herkennen</option>
+          </select>
+        </label>
+        <button id="ear-start">Nieuwe vraag</button>
+        <button id="ear-replay" disabled>🔊 Opnieuw</button>
+      </div>
+      <p class="hint" id="ear-hint">Luister naar de noot en zoek hem op de piano.</p>
+      <div id="ear-choices" class="choices"></div>
+      <div class="feedback" id="ear-feedback"></div>
+      <div class="scoreline" id="ear-score"></div>
+    </section>
+
+    <!-- Liedjes -->
+    <section id="tab-songs" class="tab">
+      <h2>Liedjes</h2>
+      <div class="panel controls">
+        <label>Liedje <select id="song-select"></select></label>
+        <button id="song-demo">▶ Voorspelen</button>
+        <button id="song-practice">Oefenen</button>
+        <button id="song-stop">■ Stop</button>
+      </div>
+      <p class="hint">Bij <em>Oefenen</em> licht de volgende toets op. Het liedje wacht tot je de juiste toets speelt.</p>
+      <div class="sequence" id="song-seq"></div>
+      <div class="feedback" id="song-feedback"></div>
+    </section>
+
+    <!-- Toonladders -->
+    <section id="tab-scales" class="tab">
+      <h2>Toonladders</h2>
+      <div class="panel controls">
+        <label>Grondtoon
+          <select id="scale-root"></select>
+        </label>
+        <label>Soort
+          <select id="scale-type">
+            <option value="major">Majeur</option>
+            <option value="minor">Mineur (natuurlijk)</option>
+            <option value="harmonic">Mineur (harmonisch)</option>
+            <option value="penta">Pentatonisch majeur</option>
+            <option value="chromatic">Chromatisch</option>
+          </select>
+        </label>
+        <button id="scale-demo">▶ Voorspelen</button>
+        <button id="scale-practice">Oefenen</button>
+        <button id="scale-stop">■ Stop</button>
+      </div>
+      <p class="hint">De toetsen van de toonladder zijn gemarkeerd. Oefen omhoog en weer omlaag.</p>
+      <div class="sequence" id="scale-seq"></div>
+      <div class="feedback" id="scale-feedback"></div>
+    </section>
+  </main>
+
+  <footer class="piano-dock">
+    <div class="piano-options">
+      <label>Notennamen
+        <select id="label-mode">
+          <option value="letters">C D E</option>
+          <option value="solfege">Do Re Mi</option>
+          <option value="none">Uit</option>
+        </select>
+      </label>
+      <label>Volume <input type="range" id="volume" min="0" max="100" value="70"></label>
+      <span id="midi-status" class="muted"></span>
+    </div>
+    <div class="piano-scroll"><div id="piano" class="piano"></div></div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
